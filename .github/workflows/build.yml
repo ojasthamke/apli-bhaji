@@ -28,17 +28,23 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Generate Platform Folders
-        run: flutter create .
+      - name: Create Clean Flutter Project
+        run: |
+          flutter create -t app --project-name apli_bhaji real_app
+          cp -r lib real_app/
+          cp pubspec.yaml real_app/
+          cp -r assets real_app/ 2>/dev/null || :
 
       - name: Install dependencies
+        working-directory: ./real_app
         run: flutter pub get
 
       - name: Build APK
+        working-directory: ./real_app
         run: flutter build apk --release
 
       - name: Upload APK as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: real_app/build/app/outputs/flutter-apk/app-release.apk
